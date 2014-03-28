@@ -1,4 +1,4 @@
-package fr.xebia.xebay.client.http;
+package fr.xebia.xebay.client;
 
 import fr.xebia.xebay.domain.BidOffer;
 import fr.xebia.xebay.domain.PublicUser;
@@ -113,9 +113,9 @@ public class RestBidderTest {
             apiKey = register("email@provider.net");
             BidOffer currentBidOffer = restBidder.getCurrentOffer();
             double firstValue = currentBidOffer.getItem().getValue();
-            double newValue = firstValue * 1.1;
+            double newValue = Math.floor(firstValue * 1.1);
 
-            BidOffer bidOffer = restBidder.bidForm(currentBidOffer.getItem().getName(), newValue, apiKey);
+            BidOffer bidOffer = restBidder.bid(currentBidOffer.getItem().getName(), newValue, apiKey);
 
             assertThat(bidOffer.getBidder()).isEqualTo("email@provider.net");
             assertThat(bidOffer.getItem().getValue()).isEqualTo(newValue);
@@ -135,7 +135,7 @@ public class RestBidderTest {
             double firstValue = currentBidOffer.getItem().getValue();
             double newValue = firstValue * 1.1;
             String itemName = currentBidOffer.getItem().getName();
-            restBidder.bidForm(itemName, newValue, apiKey);
+            restBidder.bid(itemName, newValue, apiKey);
             Thread.sleep(10000);
             newValue = Math.round(newValue * 2);
 
