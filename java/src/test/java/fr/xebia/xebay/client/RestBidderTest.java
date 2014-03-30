@@ -113,7 +113,7 @@ public class RestBidderTest {
             apiKey = register("email@provider.net");
             BidOffer currentBidOffer = restBidder.getCurrentOffer();
             double firstValue = currentBidOffer.getItem().getValue();
-            double newValue = Math.floor(firstValue * 1.1);
+            double newValue = firstValue * 2;
 
             BidOffer bidOffer = restBidder.bid(currentBidOffer.getItem().getName(), newValue, apiKey);
 
