@@ -10,17 +10,17 @@ import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class WebSocketBidderTest {
+public class AsyncClientTest {
     @Rule
     public BidderTest bidderTest = new BidderTest();
 
     @Test
     public void should_notify_bid_offer() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
         String apiKey = null;
-        WebSocketBidder bidder = null;
+        AsyncClient bidder = null;
         try {
             apiKey = bidderTest.register("email@provider.net");
-            bidder = new WebSocketBidder("ws://localhost:8080/socket/bidEngine/" + apiKey);
+            bidder = new AsyncClient("ws://localhost:8080/socket/bidEngine/" + apiKey);
             final WebSocketBidderStore bidOfferResult = new WebSocketBidderStore();
             bidder.onBidOfferChange(updatedBidOffer -> {
                 bidOfferResult.set(updatedBidOffer);
@@ -50,10 +50,10 @@ public class WebSocketBidderTest {
     @Test
     public void should_notify_info() throws DeploymentException, IOException, URISyntaxException, InterruptedException {
         String apiKey = null;
-        WebSocketBidder bidder = null;
+        AsyncClient bidder = null;
         try {
             apiKey = bidderTest.register("email@provider.net");
-            bidder = new WebSocketBidder("ws://localhost:8080/socket/bidEngine/" + apiKey);
+            bidder = new AsyncClient("ws://localhost:8080/socket/bidEngine/" + apiKey);
             final WebSocketBidderStore result = new WebSocketBidderStore();
             bidder.onInfo(info -> {
                 result.setInfo(info);

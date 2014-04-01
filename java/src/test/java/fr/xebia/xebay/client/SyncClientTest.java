@@ -12,7 +12,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RestBidderTest {
+public class SyncClientTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -39,7 +39,7 @@ public class RestBidderTest {
         bidderTest.unregister(apiKey);
 
         thrown.expect(NotAuthorizedException.class);
-        bidderTest.restBidder.getUserInfo(apiKey);
+        bidderTest.syncClient.getUserInfo(apiKey);
     }
 
     @Test
@@ -48,7 +48,7 @@ public class RestBidderTest {
         try {
             apiKey = bidderTest.register("email@provider.net");
 
-            User userInfo = bidderTest.restBidder.getUserInfo(apiKey);
+            User userInfo = bidderTest.syncClient.getUserInfo(apiKey);
 
             assertThat(userInfo.getName()).isEqualTo("email@provider.net");
             assertThat(userInfo.getBalance()).isEqualTo(1000);
@@ -66,7 +66,7 @@ public class RestBidderTest {
         try {
             apiKey = bidderTest.register("email@provider.net");
 
-            Set<PublicUser> users = bidderTest.restBidder.getPublicUsers();
+            Set<PublicUser> users = bidderTest.syncClient.getPublicUsers();
 
             assertThat(users).hasSize(1).containsOnly(new PublicUser("email@provider.net", 1000, 0));
         } finally {
@@ -78,7 +78,7 @@ public class RestBidderTest {
 
     @Test
     public void should_get_current_bid_offer() {
-        BidOffer currentOffer = bidderTest.restBidder.getCurrentOffer();
+        BidOffer currentOffer = bidderTest.syncClient.getCurrentOffer();
 
         assertThat(currentOffer.getItem()).isNotNull();
         assertThat(currentOffer.getTimeToLive()).isGreaterThanOrEqualTo(0);
@@ -89,11 +89,11 @@ public class RestBidderTest {
         String apiKey = null;
         try {
             apiKey = bidderTest.register("email@provider.net");
-            BidOffer currentBidOffer = bidderTest.restBidder.getCurrentOffer();
+            BidOffer currentBidOffer = bidderTest.syncClient.getCurrentOffer();
             double firstValue = currentBidOffer.getItem().getValue();
             double newValue = firstValue * 2;
 
-            BidOffer bidOffer = bidderTest.restBidder.bid(currentBidOffer.getItem().getName(), newValue, apiKey);
+            BidOffer bidOffer = bidderTest.syncClient.bid(currentBidOffer.getItem().getName(), newValue, apiKey);
 
             assertThat(bidOffer.getBidder()).isEqualTo("email@provider.net");
             assertThat(bidOffer.getItem().getValue()).isEqualTo(newValue);
@@ -109,18 +109,18 @@ public class RestBidderTest {
         String apiKey = null;
         try {
             apiKey = bidderTest.register("email@provider.net");
-            BidOffer currentBidOffer = bidderTest.restBidder.getCurrentOffer();
+            BidOffer currentBidOffer = bidderTest.syncClient.getCurrentOffer();
             double firstValue = currentBidOffer.getItem().getValue();
             double newValue = firstValue * 1.1;
             String itemName = currentBidOffer.getItem().getName();
-            bidderTest.restBidder.bid(itemName, newValue, apiKey);
+            bidderTest.syncClient.bid(itemName, newValue, apiKey);
             Thread.sleep(10000);
             newValue = Math.round(newValue * 2);
 
-            bidderTest.restBidder.sell(itemName, newValue, apiKey);
+            bidderTest.syncClient.sell(itemName, newValue, apiKey);
 
             Thread.sleep(10000);
-            currentBidOffer = bidderTest.restBidder.getCurrentOffer();
+            currentBidOffer = bidderTest.syncClient.getCurrentOffer();
             assertThat(currentBidOffer.getOwner()).isEqualTo("email@provider.net");
             assertThat(currentBidOffer.getItem().getValue()).isEqualTo(newValue);
         } finally {

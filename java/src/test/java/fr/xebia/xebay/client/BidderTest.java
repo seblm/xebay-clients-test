@@ -14,16 +14,16 @@ import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 public class BidderTest extends ExternalResource {
     private static final String ADMIN_KEY = "4dm1n";
 
-    protected RestBidder restBidder;
+    protected SyncClient syncClient;
     protected WebTarget target;
     BidOffer currentOffer;
 
     @Override
     protected void before() {
         String target = "http://localhost:8080/rest";
-        this.restBidder = new RestBidder(target);
+        this.syncClient = new SyncClient(target);
         try {
-            currentOffer = restBidder.getCurrentOffer();
+            currentOffer = syncClient.getCurrentOffer();
         } catch (ProcessingException e) {
             System.out.format("Please start a bid server on %s%n", target);
             throw e;
@@ -48,7 +48,7 @@ public class BidderTest extends ExternalResource {
     }
 
     protected void bid(String apiKey) {
-        restBidder.bid(currentOffer.getItem().getName(), currentOffer.getItem().getValue() * 1.2, apiKey);
+        syncClient.bid(currentOffer.getItem().getName(), currentOffer.getItem().getValue() * 1.2, apiKey);
     }
 
     protected void activate(String pluginName) {
