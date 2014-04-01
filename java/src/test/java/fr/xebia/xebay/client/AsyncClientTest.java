@@ -20,7 +20,7 @@ public class AsyncClientTest {
         AsyncClient bidder = null;
         try {
             apiKey = bidderTest.register("email@provider.net");
-            bidder = new AsyncClient("ws://localhost:8080/socket/bidEngine/" + apiKey);
+            bidder = new AsyncClient("localhost:8080", apiKey);
             final WebSocketBidderStore bidOfferResult = new WebSocketBidderStore();
             bidder.onBidOfferChange(updatedBidOffer -> {
                 bidOfferResult.set(updatedBidOffer);
@@ -53,7 +53,7 @@ public class AsyncClientTest {
         AsyncClient bidder = null;
         try {
             apiKey = bidderTest.register("email@provider.net");
-            bidder = new AsyncClient("ws://localhost:8080/socket/bidEngine/" + apiKey);
+            bidder = new AsyncClient("localhost:8080", apiKey);
             final WebSocketBidderStore result = new WebSocketBidderStore();
             bidder.onInfo(info -> {
                 result.setInfo(info);

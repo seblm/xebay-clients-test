@@ -20,15 +20,15 @@ public class BidderTest extends ExternalResource {
 
     @Override
     protected void before() {
-        String target = "http://localhost:8080/rest";
-        this.syncClient = new SyncClient(target);
+        String hostAndPort = "localhost:8080";
+        this.syncClient = new SyncClient(hostAndPort);
         try {
             currentOffer = syncClient.getCurrentOffer();
         } catch (ProcessingException e) {
-            System.out.format("Please start a bid server on %s%n", target);
+            System.out.format("Please start a bid server on %s%n", hostAndPort);
             throw e;
         }
-        this.target = ClientBuilder.newBuilder().register(JacksonFeature.class).property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true).build().target(target);
+        this.target = ClientBuilder.newBuilder().register(JacksonFeature.class).property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true).build().target("http://" + hostAndPort + "/rest");
     }
 
     protected String register(String name) {
