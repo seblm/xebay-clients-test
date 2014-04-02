@@ -1,6 +1,7 @@
 package fr.xebia.xebay.client;
 
 import fr.xebia.xebay.domain.BidOffer;
+import fr.xebia.xebay.domain.PluginInfo;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -55,8 +56,8 @@ public class AsyncClientTest {
             apiKey = bidderTest.register("email@provider.net");
             bidder = new AsyncClient("localhost:8080", apiKey);
             final WebSocketBidderStore result = new WebSocketBidderStore();
-            bidder.onInfo(info -> {
-                result.setInfo(info);
+            bidder.onPluginInfo(info -> {
+                result.setPluginInfo(info);
                 synchronized (this) {
                     this.notifyAll();
                 }
@@ -67,7 +68,8 @@ public class AsyncClientTest {
             synchronized (this) {
                 this.wait(3000);
             }
-            assertThat(result.info).isEqualTo("BankBuyEverything is now active");
+            assertThat(result.pluginInfo.getName()).isEqualTo("BankBuyEverything");
+            assertThat(result.pluginInfo.isActivated()).isTrue();
         } finally {
             if (bidder != null) {
                 bidder.session.close();
@@ -81,14 +83,14 @@ public class AsyncClientTest {
 
     private final static class WebSocketBidderStore {
         private BidOffer updatedBidOffer;
-        private String info;
+        private PluginInfo pluginInfo;
 
         private void set(BidOffer updatedBidOffer) {
             this.updatedBidOffer = updatedBidOffer;
         }
 
-        private void setInfo(String info) {
-            this.info = info;
+        private void setPluginInfo(PluginInfo pluginInfo) {
+            this.pluginInfo = pluginInfo;
         }
     }
 }
